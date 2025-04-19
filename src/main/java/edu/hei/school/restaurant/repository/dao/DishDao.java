@@ -1,5 +1,6 @@
 package edu.hei.school.restaurant.repository.dao;
 
+import edu.hei.school.restaurant.dto.DishCreation;
 import edu.hei.school.restaurant.entity.Dish;
 import edu.hei.school.restaurant.repository.DataSource;
 import org.springframework.stereotype.Repository;
@@ -69,7 +70,27 @@ public class DishDao {
         return dish;
     }
 
+    public void saveAll(List<DishCreation> dishes) {
+        for(DishCreation dish : dishes) {
+            saveDish(dish);
+        }
+    }
 
+    public void saveDish(DishCreation dish) {
+        String sql = "INSERT INTO dish (id_dish, name, unit_price) VALUES (?, ?, ?)";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setLong(1, dish.getIdDish());
+            preparedStatement.setString(2, dish.getName());
+            preparedStatement.setDouble(3, dish.getUnitPrice());
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
 

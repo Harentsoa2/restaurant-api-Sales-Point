@@ -10,17 +10,18 @@ import lombok.Setter;
 
 @Setter
 @Getter
-@JsonPropertyOrder({"requiredQuantity", "id", "name"})
+@JsonPropertyOrder({"requiredQuantity", "id", "name", "unit"})
 public class IngredientWithQuantityRest {
     @JsonProperty("id")
     private Long idIngredient;
     @JsonProperty("name")
     private String nameIngredient;
+    @JsonProperty("unit")
     private Unity unity;
     @JsonProperty("requiredQuantity")
     private Double quantity;
 
-
+    @JsonCreator
     public IngredientWithQuantityRest(Long idIngredient, String nameIngredient, Unity unity, Double quantity) {
         this.idIngredient = idIngredient;
         this.nameIngredient = nameIngredient;
@@ -28,7 +29,7 @@ public class IngredientWithQuantityRest {
         this.quantity = quantity;
     }
 
-    @JsonCreator
+
     public IngredientWithQuantityRest(Long idIngredient, Double quantity, String nameIngredient) {
         this.idIngredient = idIngredient;
         this.quantity = quantity;

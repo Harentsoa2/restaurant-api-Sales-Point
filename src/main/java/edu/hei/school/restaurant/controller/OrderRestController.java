@@ -22,7 +22,7 @@ public class OrderRestController {
     }
 
     @GetMapping("/orders/{reference}")
-    public ResponseEntity<Object> getOrder(@PathVariable Long reference) {
+    public ResponseEntity<Object> getOrder(@PathVariable String reference) {
         OrderRest orderRest = orderService.getByID(reference);
         if(orderRest == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -31,19 +31,19 @@ public class OrderRestController {
     }
 
     @PostMapping("/order/{reference}")
-    public ResponseEntity<Object> createOrder(@PathVariable Long reference) {
+    public ResponseEntity<Object> createOrder(@PathVariable String reference) {
             OrderRest orderRest = orderService.createOrder(reference);
             return new ResponseEntity<>(orderRest, HttpStatus.CREATED);
     }
 
     @PutMapping("/orders/{reference}/dishes")
-    public ResponseEntity<Object> updateOrder(@PathVariable Long reference, @RequestBody OrderQuantityDish orderQuantityDish) {
+    public ResponseEntity<Object> updateOrder(@PathVariable String reference, @RequestBody OrderQuantityDish orderQuantityDish) {
         OrderRest order = orderService.saveAll(reference, orderQuantityDish);
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
     @PutMapping("/orders/{reference}/dishes/{dishId}")
-    public ResponseEntity<Object> saveHistoryDishOrder(@PathVariable Long reference, @PathVariable Long dishId, @RequestBody ChangeStatus changeStatus) {
+    public ResponseEntity<Object> saveHistoryDishOrder(@PathVariable String reference, @PathVariable Long dishId, @RequestBody ChangeStatus changeStatus) {
         OrderRest statusHistory = orderService.saveHistoryDishOrder(reference, dishId, changeStatus);
         return new ResponseEntity<>(statusHistory, HttpStatus.OK);
     }
@@ -51,6 +51,11 @@ public class OrderRestController {
     @GetMapping("/sales")
     public ResponseEntity<Object> getDishesSold() {
         return new ResponseEntity<>(orderService.getDishesSold(), HttpStatus.OK);
+    }
+
+    @GetMapping("/orders")
+    public ResponseEntity<Object> getOrders() {
+        return new ResponseEntity<>(orderService.getAll(), HttpStatus.OK);
     }
 
 

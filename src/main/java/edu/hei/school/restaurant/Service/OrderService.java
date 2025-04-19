@@ -35,25 +35,25 @@ public class OrderService {
         this.orderDishMapper = orderDishMapper;
     }
 
-    public OrderRest getByID(Long reference){
+    public OrderRest getByID(String reference){
         Order order = orderDao.getById(reference);
         return orderMapper.toRest(order);
     }
 
-    public OrderRest saveAll(Long reference, OrderQuantityDish orderQuantityDish){
+    public OrderRest saveAll(String reference, OrderQuantityDish orderQuantityDish){
         List<QuantityDish> quantityDishes = orderQuantityDish.getQuantityDishes();
         List<DishOrder> dishOrders = dishOrderDao.saveAll(reference, orderDishMapper.toModel(quantityDishes));
         orderHistoryDao.saveStatusHistory(reference, new StatusHistory(LocalDateTime.now(), orderQuantityDish.getOrderStatus()));
         return orderMapper.toRest(orderDao.getById(reference));
     }
 
-    public OrderRest saveHistoryDishOrder(Long reference, Long idDish, ChangeStatus changeStatus){
+    public OrderRest saveHistoryDishOrder(String reference, Long idDish, ChangeStatus changeStatus){
         Long idDishOrder = dishOrderHistoryDao.getDishOrderId(reference, idDish);
         dishOrderHistoryDao.saveStatusHistory(idDishOrder, new StatusHistory(LocalDateTime.now(), changeStatus.getStatus()));
         return orderMapper.toRest(orderDao.getById(reference));
     }
 
-    public OrderRest createOrder(Long idOrder){
+    public OrderRest createOrder(String idOrder){
         Order order = orderDao.CreateOrder(idOrder);
         System.out.println(order);
         return orderMapper.toRest(order);
@@ -62,5 +62,9 @@ public class OrderService {
 
     public List<DishSales> getDishesSold() {
         return orderDao.getDishesSold();
+    }
+
+    public List<Order> getAll(){
+        return orderDao.getAll();
     }
 }

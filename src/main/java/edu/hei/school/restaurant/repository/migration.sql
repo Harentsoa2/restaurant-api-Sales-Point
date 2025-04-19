@@ -9,15 +9,18 @@ DELETE FROM "Order";
 DELETE FROM Ingredient;
 DELETE FROM Dish;
 
+
+
 DROP TABLE IF EXISTS DishOrderStatusHistory;
 DROP TABLE IF EXISTS DishOrder;
-
 DROP TABLE IF EXISTS OrderStatusHistory;
+DROP TABLE IF EXISTS "Order";
+
 
 DROP TABLE IF EXISTS StockMovement;
 DROP TABLE IF EXISTS Price;
 DROP TABLE IF EXISTS Dish_Ingredient;
-DROP TABLE IF EXISTS "Order";
+
 DROP TABLE IF EXISTS Ingredient;
 DROP TABLE IF EXISTS Dish;
 
@@ -98,14 +101,14 @@ END $$;
 
 
 CREATE TABLE IF NOT EXISTS "Order" (
-    id_order SERIAL PRIMARY KEY,
+    id_order varchar(20) PRIMARY KEY,
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 
 CREATE TABLE IF NOT EXISTS DishOrder (
     id_dish_order SERIAL unique,
-    id_order INT NOT NULL,
+    id_order  varchar(20) not NULL,
     id_dish INT NOT NULL,
     quantity int not null,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -118,7 +121,7 @@ CREATE TABLE IF NOT EXISTS DishOrder (
 CREATE TABLE IF NOT EXISTS OrderStatusHistory (
 
     id_status_history SERIAL,
-    id_order INT NOT NULL,
+    id_order varchar(20) not NULL,
     new_status OrderStatus NOT NULL,
     change_date TIMESTAMP NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id_order, new_status),

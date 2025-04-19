@@ -43,7 +43,7 @@ public class OrderHistoryDao {
         return orderHistories;
     }
 
-    public List<StatusHistory> getAllByOrderId(Long reference) {
+    public List<StatusHistory> getAllByOrderId(String reference) {
         List<StatusHistory> dishOrderHistories = new ArrayList<StatusHistory>();
         String sql = "select id_order, new_status, change_date from orderstatushistory where id_order = ?";
 
@@ -51,7 +51,7 @@ public class OrderHistoryDao {
 
         try(PreparedStatement pstmp = connection.prepareStatement(sql);
         ) {
-            pstmp.setLong(1, reference);
+            pstmp.setString(1, reference);
             try(ResultSet rs = pstmp.executeQuery()) {
                 while (rs.next()) {
                     StatusHistory statusHistory = new StatusHistory();
@@ -67,14 +67,14 @@ public class OrderHistoryDao {
         return dishOrderHistories;
     }
 
-    public List<Long> findDishOrderIdsByOrderId(Long orderId) {
+    public List<Long> findDishOrderIdsByOrderId(String orderId) {
         List<Long> ids = new ArrayList<>();
         String sql = "SELECT id_dish_order FROM dishorder WHERE id_order = ?";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setLong(1, orderId);
+            stmt.setString(1, orderId);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -89,7 +89,7 @@ public class OrderHistoryDao {
     }
 
 
-    public StatusHistory saveStatusHistory(Long reference, StatusHistory statusHistory) {
+    public StatusHistory saveStatusHistory(String reference, StatusHistory statusHistory) {
         String sql = "insert into orderStatusHistory (id_order, new_status, change_date) values (?, ?, ?)"+
                         "on conflict (id_order, new_status) do update set change_date = excluded.change_date";
 
@@ -98,7 +98,7 @@ public class OrderHistoryDao {
         try(Connection connection = dataSource.getConnection();
             PreparedStatement pstmtp = connection.prepareStatement(sql);
         ){
-            pstmtp.setLong(1, reference);
+            pstmtp.setString(1, reference);
             pstmtp.setObject(2, statusHistory.getStatus().name(), Types.OTHER);
             pstmtp.setTimestamp(3, Timestamp.valueOf(statusHistory.getStatusChangeDate()));
             pstmtp.executeUpdate();

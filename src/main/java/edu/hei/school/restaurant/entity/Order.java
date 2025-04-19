@@ -11,19 +11,19 @@ import java.util.Objects;
 @Setter
 @Getter
 public class Order {
-    private Long reference;
+    private String reference;
     private LocalDateTime orderDate;
     private List<StatusHistory> orderStatusHistories;
     private List<DishOrder> dishOrders;
 
-    public Order(Long reference, LocalDateTime orderDate, List<DishOrder> dishOrders) {
+    public Order(String reference, LocalDateTime orderDate, List<DishOrder> dishOrders) {
         this.reference =  reference;
         this.orderDate = orderDate;
         this.orderStatusHistories = List.of(new StatusHistory(orderDate, OrderStatus.CREATED));
         this.dishOrders = dishOrders;
     }
 
-    public Order(Long reference, LocalDateTime orderDate) {
+    public Order(String reference, LocalDateTime orderDate) {
         this.reference = reference;
         this.orderDate = orderDate;
         this.orderStatusHistories = List.of(new StatusHistory(orderDate, OrderStatus.CREATED));;

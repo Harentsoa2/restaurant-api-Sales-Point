@@ -103,11 +103,11 @@ public class DishOrderHistoryDao {
     }
 
 
-    public Long getDishOrderId(Long orderId, Long dishId) {
+    public Long getDishOrderId(String orderId, Long dishId) {
         String sql = "SELECT id_dish_order FROM dishorder WHERE id_order = ? AND id_dish = ?";
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, orderId);
+            stmt.setString(1, orderId);
             stmt.setLong(2, dishId);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -141,14 +141,14 @@ public class DishOrderHistoryDao {
                 pstmt.executeUpdate();
             }
 
-            Long idOrder = null;
+            String idOrder = null;
             try (PreparedStatement stmt = conn.prepareStatement("""
             SELECT id_order FROM DishOrder WHERE id_dish_order = ?
         """)) {
                 stmt.setLong(1, idDishOrder);
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next()) {
-                        idOrder = rs.getLong("id_order");
+                        idOrder = rs.getString("id_order");
                     }
                 }
             }
@@ -165,7 +165,7 @@ public class DishOrderHistoryDao {
                     ORDER BY id_dish_order, change_date DESC
                 ) AS latest_statuses
             """)) {
-                    stmt.setLong(1, idOrder);
+                    stmt.setString(1, idOrder);
                     try (ResultSet rs = stmt.executeQuery()) {
                         List<String> distinctStatuses = new ArrayList<>();
                         while (rs.next()) {
@@ -180,7 +180,7 @@ public class DishOrderHistoryDao {
                             ON CONFLICT (id_order, new_status)
                             DO UPDATE SET change_date = EXCLUDED.change_date
                         """)) {
-                                insertOrderHistory.setLong(1, idOrder);
+                                insertOrderHistory.setString(1, idOrder);
                                 insertOrderHistory.setObject(2, distinctStatuses.get(0), Types.OTHER);
                                 insertOrderHistory.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
                                 insertOrderHistory.executeUpdate();

@@ -1,6 +1,7 @@
 package edu.hei.school.restaurant.controller;
 
 import edu.hei.school.restaurant.Service.DishService;
+import edu.hei.school.restaurant.dto.DishCreation;
 import edu.hei.school.restaurant.dto.DishRest;
 import edu.hei.school.restaurant.dto.IngredientWithQuantityRest;
 import edu.hei.school.restaurant.entity.RequiredIngredient;
@@ -30,4 +31,9 @@ public class DishRestController {
         return new ResponseEntity<>(dishRest, HttpStatus.OK);
     }
 
+    @PutMapping("/dishes")
+    public ResponseEntity<Object> addDish(@RequestBody List<DishCreation> dishCreations) {
+        List<DishRest> dishRests = dishService.saveAll(dishCreations);
+        return new ResponseEntity<>(dishRests, HttpStatus.OK);
+    }
 }

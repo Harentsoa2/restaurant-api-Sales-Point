@@ -48,13 +48,13 @@ public class DishOrderDao {
         return dishOrders;
     }
 
-    public List<DishOrder> getDishOrderByOrderId(Long reference) {
+    public List<DishOrder> getDishOrderByOrderId(String reference) {
         String dishOrderQuery = "SELECT id_dish_order, id_dish, quantity FROM DishOrder WHERE id_order = ?";
         List<DishOrder> dishOrders = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement dishOrderStmt = connection.prepareStatement(dishOrderQuery)) {
-            dishOrderStmt.setLong(1, reference);
+            dishOrderStmt.setString(1, reference);
             try (ResultSet dishOrderRs = dishOrderStmt.executeQuery()) {
                 while (dishOrderRs.next()) {
                     DishOrder dishOrder = new DishOrder();
@@ -71,20 +71,20 @@ public class DishOrderDao {
         return dishOrders;
     }
 
-    public List<DishOrder> saveAll(Long reference, List<DishOrder> dishOrders) {
+    public List<DishOrder> saveAll(String reference, List<DishOrder> dishOrders) {
         for(DishOrder dishOrder : dishOrders) {
             saveOne(reference, dishOrder);
         }
         return dishOrders;
     }
 
-    public DishOrder saveOne(Long reference, DishOrder dishOrder) {
+    public DishOrder saveOne(String reference, DishOrder dishOrder) {
         String sql = "insert into dishorder (id_order, id_dish, quantity) values (?, ?, ?)"+
                         "on conflict (id_order, id_dish) do update set quantity = excluded.quantity";
         try(Connection connection = dataSource.getConnection();
             PreparedStatement pstmt = connection.prepareStatement(sql);
         ){
-            pstmt.setLong(1, reference);
+            pstmt.setString(1, reference);
             pstmt.setLong(2, dishOrder.getDish().getIdDish());
             pstmt.setInt(3, dishOrder.getQuantity());
             pstmt.executeUpdate();

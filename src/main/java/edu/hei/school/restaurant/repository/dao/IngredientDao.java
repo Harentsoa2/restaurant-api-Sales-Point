@@ -153,6 +153,9 @@ public class IngredientDao {
 
 
     public RequiredIngredient addIngredient(Long idDish, RequiredIngredient requiredIngredient) {
+        if(getById(requiredIngredient.getIngredient().getIdIngredient()) == null){
+
+        }
         saveOne(requiredIngredient.getIngredient());
         String sql = "insert into dish_ingredient (id_dish, id_ingredient, required_quantity, unit) VALUES (?, ?, ?, ?)"+
                         "on conflict (id_ingredient, id_dish) DO UPDATE SET required_quantity = excluded.required_quantity";

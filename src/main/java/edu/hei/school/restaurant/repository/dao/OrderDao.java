@@ -28,20 +28,46 @@ public class OrderDao {
         this.orderHistoryDao = orderHistoryDao;
     }
 
-    public Order getById(Long reference) {
+    public List<Order> getAll() {
+        List<Order> orders = new ArrayList<>();
+        String sql = "SELECT id_order, created_at FROM \"Order\"";
+
+        try (
+                Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                Order order = new Order();
+                order.setReference(rs.getString("id_order"));
+                order.setOrderDate(rs.getObject("created_at", LocalDateTime.class));
+                order.setDishOrders(dishOrderDao.getDishOrderByOrderId(rs.getString("id_order")));
+                order.setOrderStatusHistories(orderHistoryDao.getAllByOrderId(rs.getString("id_order")));
+
+                orders.add(order);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching orders", e);
+        }
+        return orders;
+    }
+
+
+    public Order getById(String reference) {
         Order order = new Order();
         String sql = "select id_order, created_at from \"Order\" where id_order = ?";
 
         try (
                 Connection conn = dataSource.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, reference);
+            pstmt.setString(1, reference);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    order.setReference(rs.getLong("id_order"));
+                    order.setReference(rs.getString("id_order"));
                     order.setOrderDate(rs.getObject("created_at", LocalDateTime.class));
-                    order.setDishOrders(dishOrderDao.getDishOrderByOrderId(rs.getLong("id_order")));
-                    order.setOrderStatusHistories(orderHistoryDao.getAllByOrderId(rs.getLong("id_order")));
+                    order.setDishOrders(dishOrderDao.getDishOrderByOrderId(rs.getString("id_order")));
+                    order.setOrderStatusHistories(orderHistoryDao.getAllByOrderId(rs.getString("id_order")));
                 }
             }
 
@@ -51,7 +77,7 @@ public class OrderDao {
         return order;
     }
 
-    public Order insertOrder(Long idOrder) {
+    public Order insertOrder(String idOrder) {
         String sql = "INSERT INTO \"Order\" (id_order, created_at) VALUES (?, ?) on conflict (id_order) do update set created_at = excluded.created_at";
         LocalDateTime createdAt = LocalDateTime.now();
 
@@ -61,7 +87,7 @@ public class OrderDao {
         ) {
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-                pstmt.setLong(1, idOrder);
+                pstmt.setString(1, idOrder);
                 pstmt.setObject(2, createdAt);
                 pstmt.executeUpdate();
             }
@@ -73,7 +99,7 @@ public class OrderDao {
         return new Order();
     }
 
-    public Order CreateOrder(Long idOrder) {
+    public Order CreateOrder(String idOrder) {
        Order order =  insertOrder(idOrder);
        orderHistoryDao.saveStatusHistory(idOrder, new StatusHistory(LocalDateTime.now(), OrderStatus.CREATED));
        return getById(idOrder);

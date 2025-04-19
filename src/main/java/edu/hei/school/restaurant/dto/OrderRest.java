@@ -15,7 +15,7 @@ import java.util.List;
 @JsonPropertyOrder({"id", "totalAmount", "actualStatus", "dishes"})
 public class OrderRest {
     @JsonProperty("id")
-    private Long reference;
+    private String reference;
     @JsonProperty("dishes")
     private List<DishOrderRest> dishOrderRests;
     @JsonProperty("actualStatus")

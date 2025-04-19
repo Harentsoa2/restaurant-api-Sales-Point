@@ -1,5 +1,6 @@
 package edu.hei.school.restaurant.Service;
 
+import edu.hei.school.restaurant.dto.DishCreation;
 import edu.hei.school.restaurant.dto.DishRest;
 import edu.hei.school.restaurant.dto.IngredientWithQuantityRest;
 import edu.hei.school.restaurant.entity.Dish;
@@ -35,6 +36,11 @@ public class DishService {
         List<RequiredIngredient> requiredIngredients = ingredientWithQuantityRests.stream().map(i -> ingredientWithQuantityMapper.toModel(i)).toList();
        ingredientDao.addAllIngredient(idDish, requiredIngredients);
         return dishMapper.toRest(dishDao.getById(idDish));
+    }
+
+    public List<DishRest> saveAll(List<DishCreation> dishes){
+        dishDao.saveAll(dishes);
+        return getAll();
     }
 
 
